@@ -23,7 +23,7 @@ export class AuthController {
     @UseGuards(GoogleAuthGuard)
     // eslint-disable-next-line
     async googleAuthCallback(@Req() req: any): Promise<LoginResponseDto> {
-        return this.authService.googleLogin(req.login);
+        return this.authService.googleLogin(req.user);
     }
 
     @Get('me')
