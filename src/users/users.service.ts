@@ -63,6 +63,37 @@ export class UsersService {
         return user;
     }
 
+    async updateProfile(
+        userId: string,
+        updateData: {
+            firstName?: string;
+            lastName?: string;
+            birthDate?: string;
+            avatar?: string;
+        }
+    ): Promise<User> {
+        const user = await this.findById(userId);
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        if (updateData.firstName !== undefined) {
+            user.firstName = updateData.firstName;
+        }
+        if (updateData.lastName !== undefined) {
+            user.lastName = updateData.lastName;
+        }
+        if (updateData.birthDate !== undefined) {
+            user.birthDate = new Date(updateData.birthDate);
+        }
+        if (updateData.avatar !== undefined) {
+            user.avatar = updateData.avatar;
+        }
+
+        return this.userRepository.save(user);
+    }
+
     async deleteAccount(userId: string): Promise<void> {
         const user = await this.findById(userId);
 
