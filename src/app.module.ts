@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { VinylsModule } from './vinyls/vinyls.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
     imports: [
@@ -44,6 +45,8 @@ import { ReviewsModule } from './reviews/reviews.module';
         VinylsModule,
 
         ReviewsModule,
+
+        OrdersModule,
     ],
     controllers: [AppController],
     providers: [AppService],
