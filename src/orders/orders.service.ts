@@ -99,7 +99,7 @@ export class OrdersService {
         }
     }
 
-    async handleWebHook(signature: string, rawBody: Buffer): Promise<void> {
+    async handleWebhook(signature: string, rawBody: Buffer): Promise<void> {
         const webhookSecret = this.configService.get<string>(
             'STRIPE_WEBHOOK_SECRET'
         );

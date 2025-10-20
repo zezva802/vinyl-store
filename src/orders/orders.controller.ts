@@ -47,7 +47,7 @@ export class OrdersController {
             throw new Error('Raw body is required for webhook verification');
         }
 
-        await this.ordersService.handleWebHook(signature, rawBody);
+        await this.ordersService.handleWebhook(signature, rawBody);
 
         return { received: true };
     }
