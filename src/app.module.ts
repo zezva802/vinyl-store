@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { VinylsModule } from './vinyls/vinyls.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
     imports: [
@@ -41,6 +42,8 @@ import { VinylsModule } from './vinyls/vinyls.module';
         UsersModule,
 
         VinylsModule,
+
+        ReviewsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
