@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderStatus } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderItem } from './entities/order-item.entity';
-import { VinylsService } from 'src/vinyls/vinyls.service';
+import { VinylsService } from '../vinyls/vinyls.service';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
@@ -134,6 +134,10 @@ export class OrdersService {
                     event.data.object as Stripe.PaymentIntent
                 );
                 break;
+            case 'charge.succeeded':
+            case 'charge.updated':
+            case 'payment_intent.created':
+                break;
 
             default:
                 // eslint-disable-next-line no-console
@@ -198,7 +202,7 @@ export class OrdersService {
         });
 
         if (!order) {
-            throw new NotFoundException('Order not Found');
+            throw new NotFoundException('Order not found');
         }
 
         return order;

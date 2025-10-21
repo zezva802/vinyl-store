@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
-import { Vinyl } from 'src/vinyls/entities/vinyl.entity';
+import { Vinyl } from '../../vinyls/entities/vinyl.entity';
 
 @Entity('order_items')
 export class OrderItem {

@@ -93,9 +93,7 @@ export class VinylsService {
             throw new NotFoundException('Vinyl not found');
         }
 
-        Object.assign(vinyl, UpdateVinylDto);
-
-        return this.vinylRepository.save(vinyl);
+        return vinyl;
     }
 
     async update(id: string, updateVinylDto: UpdateVinylDto): Promise<Vinyl> {
