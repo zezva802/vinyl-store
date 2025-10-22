@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { VinylsModule } from './vinyls/vinyls.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { OrdersModule } from './orders/orders.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
     imports: [
@@ -47,6 +48,8 @@ import { OrdersModule } from './orders/orders.module';
         ReviewsModule,
 
         OrdersModule,
+
+        AuditLogsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
