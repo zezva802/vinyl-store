@@ -17,6 +17,8 @@ describe('Orders E2E - Complete Payment Flow', () => {
     let authToken: string;
 
     beforeAll(async () => {
+        process.env.NODE_ENV = 'test';
+
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         }).compile();
@@ -35,6 +37,10 @@ describe('Orders E2E - Complete Payment Flow', () => {
 
         dataSource = moduleFixture.get<DataSource>(DataSource);
         jwtService = moduleFixture.get<JwtService>(JwtService);
+
+        if (!dataSource.isInitialized) {
+            await dataSource.initialize();
+        }
 
         await dataSource.synchronize(true);
 
@@ -66,16 +72,27 @@ describe('Orders E2E - Complete Payment Flow', () => {
     });
 
     afterAll(async () => {
-        await dataSource.dropDatabase();
+        if (dataSource && dataSource.isInitialized) {
+            const dbName = dataSource.options.database;
+            if (dbName !== 'vinyl_store_test') {
+                throw new Error(
+                    `DANGER: Attempted to drop non-test database: ${dbName}`
+                );
+            }
+
+            await dataSource.dropDatabase();
+            await dataSource.destroy();
+        }
+
         await app.close();
-    });
+    }, 30000);
 
     describe('Complete Payment Flow', () => {
         it('should complete full payment workflow: create order -> webhook -> complete', async () => {
             const vinylsResponse = await request(app.getHttpServer())
                 .get('/vinyls')
                 .expect(200);
-                
+
             expect(vinylsResponse.body.data).toHaveLength(1);
             expect(vinylsResponse.body.data[0].name).toBe('Test Album');
 
@@ -126,7 +143,7 @@ describe('Orders E2E - Complete Payment Flow', () => {
             expect(userOrdersResponse.body).toHaveLength(1);
             expect(userOrdersResponse.body[0].id).toBe(orderId);
             expect(userOrdersResponse.body[0].status).toBe('completed');
-            
+
             const specificOrderResponse = await request(app.getHttpServer())
                 .get(`/orders/${orderId}`)
                 .set('Authorization', `Bearer ${authToken}`)

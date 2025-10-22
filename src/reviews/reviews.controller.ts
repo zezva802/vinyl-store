@@ -9,6 +9,7 @@ import {
     Delete,
     HttpCode,
     HttpStatus,
+    UseInterceptors,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -20,8 +21,10 @@ import { QueryReviewDto } from './dto/query-review.dto';
 import { PaginatedReviews } from './interfaces/paginated-reviews.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { AuditInterceptor } from 'src/common/interceptors/audit.interceptor';
 
 @Controller('reviews')
+@UseInterceptors(AuditInterceptor)
 export class ReviewsController {
     constructor(private readonly reviewsService: ReviewsService) {}
 

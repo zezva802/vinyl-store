@@ -10,6 +10,7 @@ import {
     HttpCode,
     HttpStatus,
     Delete,
+    UseInterceptors,
 } from '@nestjs/common';
 import { VinylsService } from './vinyls.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -22,8 +23,10 @@ import { QueryVinylDto } from './dto/query-vinyl.dto';
 import { PaginatedVinyls } from './interfaces/paginated-vinyls.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
+import { AuditInterceptor } from 'src/common/interceptors/audit.interceptor';
 
 @Controller('vinyls')
+@UseInterceptors(AuditInterceptor)
 export class VinylsController {
     constructor(private readonly vinylsService: VinylsService) {}
 

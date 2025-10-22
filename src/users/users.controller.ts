@@ -7,6 +7,7 @@ import {
     Delete,
     HttpCode,
     HttpStatus,
+    UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
@@ -14,9 +15,11 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { AuditInterceptor } from 'src/common/interceptors/audit.interceptor';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(AuditInterceptor)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 

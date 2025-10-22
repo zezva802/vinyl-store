@@ -114,7 +114,10 @@ describe('VinylsService', () => {
             };
 
             mockRepository.findOne.mockResolvedValue(vinyl);
-            mockRepository.save.mockResolvedValue({ ...vinyl, isDeleted: true });
+            mockRepository.save.mockResolvedValue({
+                ...vinyl,
+                isDeleted: true,
+            });
 
             await service.remove(vinylId);
 
@@ -197,9 +200,7 @@ describe('VinylsService', () => {
                 getManyAndCount: jest.fn().mockResolvedValue([mockVinyls, 1]),
             };
 
-            mockRepository.createQueryBuilder.mockReturnValue(
-                mockQueryBuilder
-            );
+            mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
             const result = await service.findAll(queryDto);
 

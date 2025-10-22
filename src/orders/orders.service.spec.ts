@@ -135,7 +135,9 @@ describe('OrdersService', () => {
             });
             mockOrderItemRepository.create.mockReturnValue(mockOrderItem);
             mockOrderItemRepository.save.mockResolvedValue(mockOrderItem);
-            mockStripePaymentIntents.create.mockResolvedValue(mockPaymentIntent);
+            mockStripePaymentIntents.create.mockResolvedValue(
+                mockPaymentIntent
+            );
 
             const result = await service.createPaymentIntent(
                 userId,

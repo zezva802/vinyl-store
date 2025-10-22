@@ -168,9 +168,9 @@ describe('ReviewsService', () => {
 
             const result = await service.findAll(query);
 
-            expect(mockReviewRepository.createQueryBuilder).toHaveBeenCalledWith(
-                'review'
-            );
+            expect(
+                mockReviewRepository.createQueryBuilder
+            ).toHaveBeenCalledWith('review');
             expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
                 'review.user',
                 'user'
