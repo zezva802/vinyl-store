@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Vinyl } from './entities/vinyl.entity';
 import { CreateVinylDto } from './dto/create-vinyl.dto';
 import { QueryVinylDto } from './dto/query-vinyl.dto';
@@ -19,7 +19,10 @@ export class VinylsService {
         return this.vinylRepository.save(vinyl);
     }
 
-    async findAll(query: QueryVinylDto): Promise<PaginatedVinyls> {
+    async findAll(
+        query: QueryVinylDto,
+        currentUserId?: string
+    ): Promise<PaginatedVinyls> {
         const {
             page = 1,
             limit = 20,
@@ -29,53 +32,73 @@ export class VinylsService {
             order = 'DESC',
         } = query;
 
-        const where: FindOptionsWhere<Vinyl> = {
-            isDeleted: false,
-        };
+        const queryBuilder = this.vinylRepository
+            .createQueryBuilder('vinyl')
+            .leftJoinAndSelect(
+                'vinyl.reviews',
+                'reviews',
+                'reviews.isDeleted = :reviewDeleted',
+                { reviewDeleted: false }
+            )
+            .leftJoinAndSelect('reviews.user', 'user')
+            .where('vinyl.isDeleted = :isDeleted', { isDeleted: false });
 
         if (search) {
-            const queryBuilder = this.vinylRepository
-                .createQueryBuilder('vinyl')
-                .where('vinyl.isDeleted = :isDeleted', { isDeleted: false })
-                .andWhere(
-                    '(vinyl.name LIKE :search OR vinyl.authorName LIKE :search)',
-                    { search: `%${search}%` }
-                );
-
-            if (authorName) {
-                queryBuilder.andWhere('vinyl.authorName LIKE :authorName', {
-                    authorName: `%${authorName}$%`,
-                });
-            }
-
-            queryBuilder.orderBy(`vinyl.${sortBy}`, order);
-
-            queryBuilder.skip((page - 1) * limit).take(limit);
-
-            const [data, total] = await queryBuilder.getManyAndCount();
-
-            return {
-                data,
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit),
-            };
+            queryBuilder.andWhere(
+                '(vinyl.name LIKE :search OR vinyl.authorName LIKE :search)',
+                { search: `%${search}%` }
+            );
         }
 
         if (authorName) {
-            where.authorName = Like(`%${authorName}$%`);
+            queryBuilder.andWhere('vinyl.authorName LIKE :authorName', {
+                authorName: `%${authorName}%`,
+            });
         }
 
-        const [data, total] = await this.vinylRepository.findAndCount({
-            where,
-            order: { [sortBy]: order },
-            skip: (page - 1) * limit,
-            take: limit,
+        queryBuilder.orderBy(`vinyl.${sortBy}`, order);
+
+        queryBuilder.skip((page - 1) * limit).take(limit);
+
+        const [vinyls, total] = await queryBuilder.getManyAndCount();
+
+        const data = vinyls.map((vinyl) => {
+            const activeReviews = vinyl.reviews.filter((r) => !r.isDeleted);
+
+            const reviewsToShow = currentUserId
+                ? activeReviews.filter((r) => r.userId !== currentUserId)
+                : activeReviews;
+
+            const averageScore =
+                activeReviews.length > 0
+                    ? activeReviews.reduce((sum, r) => sum + r.score, 0) /
+                      activeReviews.length
+                    : 0;
+
+            const firstReview =
+                reviewsToShow.length > 0 ? activeReviews[0] : null;
+
+            return {
+                ...vinyl,
+                averageScore: Math.round(averageScore * 10) / 10,
+                firstReview: firstReview
+                    ? {
+                          id: firstReview.id,
+                          comment: firstReview.comment,
+                          score: firstReview.score,
+                          createdAt: firstReview.createdAt,
+                          user: {
+                              firstName: firstReview.user.firstName,
+                              lastName: firstReview.user.lastName,
+                          },
+                      }
+                    : null,
+                reviews: undefined,
+            };
         });
 
         return {
-            data,
+            data: data,
             total,
             page,
             limit,
