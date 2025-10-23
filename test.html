@@ -1,320 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vinyl Store - Demo</title>
+    <title>Stripe Test</title>
     <script src="https://js.stripe.com/v3/"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-        .config-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .config-section h2 { margin-bottom: 15px; color: #333; }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        input:focus { outline: none; border-color: #667eea; }
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        button:hover { background: #5568d3; transform: translateY(-2px); }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        .vinyls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .vinyl-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .vinyl-card:hover { transform: translateY(-5px); }
-        .vinyl-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .vinyl-card h3 { color: #333; margin-bottom: 5px; }
-        .vinyl-card .author { color: #666; margin-bottom: 10px; }
-        .vinyl-card .price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            margin: 10px 0;
-        }
-        .vinyl-card .description {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        #payment-form {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: 20px auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-        }
-        #card-element {
-            border: 2px solid #ddd;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        .message {
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        .loading { text-align: center; color: white; padding: 20px; }
-        .hidden { display: none; }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎵 Vinyl Store Demo</h1>
+    <h1>Stripe Payment Test</h1>
 
-        <!-- Configuration Section -->
-        <div class="config-section">
-            <h2>⚙️ Configuration (Demo Setup)</h2>
-            <input type="text" id="apiUrl" placeholder="API URL (e.g., http://localhost:3000)" value="http://localhost:3000">
-            <input type="password" id="jwtToken" placeholder="JWT Token (Get from /auth/google/callback)">
-            <input type="text" id="stripeKey" placeholder="Stripe Publishable Key (pk_test_...)">
-            <button onclick="saveConfig()">Save Configuration</button>
-            <div id="configMessage"></div>
-        </div>
+    <h2>Step 1: Config</h2>
+    <p>JWT Token: <input type="text" id="jwtToken" size="80"></p>
+    <p>Stripe Key: <input type="text" id="stripeKey" size="80"></p>
+    <p>Vinyl ID: <input type="text" id="vinylId" size="80"></p>
+    <button onclick="saveConfig()">Save</button>
+    <p id="configMessage"></p>
 
-        <!-- Vinyls List -->
-        <div class="config-section">
-            <h2>🎼 Available Vinyls</h2>
-            <button onclick="loadVinyls()">Load Vinyls</button>
-            <div id="vinylsMessage"></div>
-            <div id="vinyls" class="vinyls-grid"></div>
-        </div>
+    <hr>
 
-        <!-- Payment Form (Hidden initially) -->
-        <form id="payment-form">
-            <h2>💳 Complete Your Purchase</h2>
-            <div id="selected-vinyl"></div>
-            <div id="card-element"></div>
-            <div id="card-errors" class="error hidden"></div>
-            <button type="submit" id="submit-button">
-                Pay Now
-            </button>
-            <button type="button" onclick="cancelPayment()" style="background: #6c757d; margin-left: 10px;">
-                Cancel
-            </button>
-            <div id="payment-message"></div>
-        </form>
+    <h2>Step 2: Create Payment</h2>
+    <button onclick="createPayment()">Create Payment Intent</button>
+    <p id="paymentMessage"></p>
+
+    <hr>
+
+    <div id="paymentForm" style="display:none;">
+        <h2>Step 3: Pay</h2>
+        <p>Order ID: <span id="orderId"></span></p>
+        <p>Amount: $<span id="amount"></span></p>
+        <div id="card-element"></div>
+        <br>
+        <button onclick="completePayment()">Pay Now</button>
+        <p id="completeMessage"></p>
     </div>
 
     <script>
-        let config = {
-            apiUrl: 'http://localhost:3000',
-            jwtToken: '',
-            stripeKey: ''
-        };
+        let config = {};
         let stripe = null;
-        let elements = null;
         let cardElement = null;
-        let selectedVinyl = null;
+        let clientSecret = '';
+        let currentOrderId = '';
 
         function saveConfig() {
-            config.apiUrl = document.getElementById('apiUrl').value;
             config.jwtToken = document.getElementById('jwtToken').value;
             config.stripeKey = document.getElementById('stripeKey').value;
+            config.vinylId = document.getElementById('vinylId').value;
 
-            if (!config.jwtToken || !config.stripeKey) {
-                showMessage('configMessage', 'Please fill in JWT Token and Stripe Key', 'error');
-                return;
-            }
-
-            // Initialize Stripe
             stripe = Stripe(config.stripeKey);
-            elements = stripe.elements();
-            cardElement = elements.create('card');
+            cardElement = stripe.elements().create('card');
             cardElement.mount('#card-element');
 
-            showMessage('configMessage', '✅ Configuration saved! You can now load vinyls.', 'success');
+            document.getElementById('configMessage').textContent = 'Saved!';
         }
 
-        async function loadVinyls() {
-            if (!config.apiUrl) {
-                showMessage('vinylsMessage', 'Please configure API URL first', 'error');
-                return;
+        async function createPayment() {
+            document.getElementById('paymentMessage').textContent = 'Creating...';
+
+            const response = await fetch('http://localhost:3000/orders/create-payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + config.jwtToken
+                },
+                body: JSON.stringify({ vinylId: config.vinylId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                clientSecret = data.clientSecret;
+                currentOrderId = data.orderId;
+                document.getElementById('orderId').textContent = data.orderId;
+                document.getElementById('amount').textContent = (data.amount / 100).toFixed(2);
+                document.getElementById('paymentForm').style.display = 'block';
+                document.getElementById('paymentMessage').textContent = 'Created! Enter card below.';
+            } else {
+                document.getElementById('paymentMessage').textContent = 'Error: ' + data.message;
             }
-
-            showMessage('vinylsMessage', 'Loading vinyls...', 'info');
-
-            try {
-                const response = await fetch(`${config.apiUrl}/vinyls`);
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message);
-
-                displayVinyls(data.data);
-                showMessage('vinylsMessage', `✅ Loaded ${data.data.length} vinyls`, 'success');
-            } catch (error) {
-                showMessage('vinylsMessage', `❌ Error: ${error.message}`, 'error');
-            }
         }
 
-        function displayVinyls(vinyls) {
-            const container = document.getElementById('vinyls');
-            container.innerHTML = vinyls.map(vinyl => `
-                <div class="vinyl-card">
-                    <img src="${vinyl.imageUrl}" alt="${vinyl.name}">
-                    <h3>${vinyl.name}</h3>
-                    <div class="author">by ${vinyl.authorName}</div>
-                    <div class="description">${vinyl.description}</div>
-                    <div class="price">$${vinyl.price}</div>
-                    <button onclick='buyVinyl(${JSON.stringify(vinyl)})'>
-                        Buy Now
-                    </button>
-                </div>
-            `).join('');
-        }
+        async function completePayment() {
+            document.getElementById('completeMessage').textContent = 'Processing...';
 
-        async function buyVinyl(vinyl) {
-            if (!config.jwtToken) {
-                alert('Please configure JWT Token first!');
-                return;
-            }
+            const result = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: { card: cardElement }
+            });
 
-            selectedVinyl = vinyl;
-
-            // Show selected vinyl info
-            document.getElementById('selected-vinyl').innerHTML = `
-                <div class="message info">
-                    <strong>${vinyl.name}</strong> by ${vinyl.authorName}<br>
-                    Price: $${vinyl.price}
-                </div>
-            `;
-
-            // Show payment form
-            document.getElementById('payment-form').style.display = 'block';
-            document.getElementById('payment-form').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function cancelPayment() {
-            document.getElementById('payment-form').style.display = 'none';
-            selectedVinyl = null;
-        }
-
-        document.getElementById('payment-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitButton = document.getElementById('submit-button');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Processing...';
-
-            try {
-                // Step 1: Create payment intent
-                showMessage('payment-message', 'Creating payment intent...', 'info');
-
-                const response = await fetch(`${config.apiUrl}/orders/create-payment-intent`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${config.jwtToken}`
-                    },
-                    body: JSON.stringify({ vinylId: selectedVinyl.id })
-                });
-
-                const { clientSecret, orderId } = await response.json();
-
-                if (!response.ok) throw new Error('Failed to create payment intent');
-
-                // Step 2: Confirm payment with Stripe
-                showMessage('payment-message', 'Processing payment...', 'info');
-
-                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-                    payment_method: {
-                        card: cardElement
-                    }
-                });
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                // Success!
-                showMessage('payment-message', 
-                    `🎉 Payment Successful!<br>
-                    Order ID: ${orderId}<br>
-                    Payment Intent: ${paymentIntent.id}<br>
-                    <br>
-                    <strong>Check your server logs - the webhook should have fired!</strong>`, 
-                    'success'
-                );
-
-                // Clear form
+            if (result.error) {
+                document.getElementById('completeMessage').textContent = 'Failed: ' + result.error.message;
+            } else {
+                document.getElementById('completeMessage').textContent = 'Success! Order: ' + currentOrderId;
                 cardElement.clear();
-                setTimeout(() => {
-                    cancelPayment();
-                }, 5000);
-
-            } catch (error) {
-                showMessage('payment-message', `❌ Payment failed: ${error.message}`, 'error');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Pay Now';
             }
-        });
-
-        function showMessage(elementId, message, type) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = `<div class="message ${type}">${message}</div>`;
         }
     </script>
 </body>

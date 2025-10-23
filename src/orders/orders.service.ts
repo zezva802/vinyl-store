@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
 import { PaymentIntentResponseDto } from './dto/payment-intent-response.dto';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class OrdersService {
@@ -23,7 +24,8 @@ export class OrdersService {
         @InjectRepository(OrderItem)
         private readonly orderItemRepository: Repository<OrderItem>,
         private readonly vinylsService: VinylsService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly emailService: EmailService
     ) {
         const stripeSecretKey =
             this.configService.get<string>('STRIPE_SECRET_KEY');
@@ -150,6 +152,7 @@ export class OrdersService {
     ): Promise<void> {
         const order = await this.orderRepository.findOne({
             where: { stripePaymentIntentId: paymentIntent.id },
+            relations: ['user', 'items', 'items.vinyl'],
         });
 
         if (!order) {
@@ -164,7 +167,7 @@ export class OrdersService {
         // eslint-disable-next-line no-console
         console.log(`Order ${order.id} marked as COMPLETED`);
 
-        // TODO: send confirmation email
+        await this.emailService.sendOrderConfirmation(order.user.email, order);
     }
 
     private async handlePaymentFailure(
@@ -172,6 +175,7 @@ export class OrdersService {
     ): Promise<void> {
         const order = await this.orderRepository.findOne({
             where: { stripePaymentIntentId: paymentIntent.id },
+            relations: ['user'],
         });
 
         if (!order) {
@@ -185,6 +189,12 @@ export class OrdersService {
         await this.orderRepository.save(order);
         // eslint-disable-next-line no-console
         console.log(`Order ${order.id} marked as FAILED`);
+
+        await this.emailService.sendPaymentFailure(
+            order.user.email,
+            order.id,
+            paymentIntent.last_payment_error?.message
+        );
     }
 
     async getUserOrders(userId: string): Promise<Order[]> {

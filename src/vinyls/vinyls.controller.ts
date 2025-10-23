@@ -32,6 +32,7 @@ import {
 } from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
+import { OptionalJwtAuthGuard } from 'src/auth/guards/optional-jwt-auth.guard';
 
 @ApiTags('vinyls')
 @Controller('vinyls')
@@ -52,9 +53,12 @@ export class VinylsController {
     }
 
     @Get()
-    @Public()
+    @UseGuards(OptionalJwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @ApiOperation({
         summary: 'Get all vinyl records with pagination and filters',
+        description:
+            'Authentication is optional. If authenticated, shows first review from other users.',
     })
     @ApiResponse({ status: 200, description: 'Returns paginated vinyls' })
     async findAll(

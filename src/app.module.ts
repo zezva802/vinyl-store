@@ -9,6 +9,7 @@ import { VinylsModule } from './vinyls/vinyls.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { OrdersModule } from './orders/orders.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
     imports: [
@@ -50,6 +51,8 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
         OrdersModule,
 
         AuditLogsModule,
+
+        EmailModule,
     ],
     controllers: [AppController],
     providers: [AppService],

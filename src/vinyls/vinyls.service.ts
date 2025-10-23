@@ -76,7 +76,7 @@ export class VinylsService {
                     : 0;
 
             const firstReview =
-                reviewsToShow.length > 0 ? activeReviews[0] : null;
+                reviewsToShow.length > 0 ? reviewsToShow[0] : null;
 
             return {
                 ...vinyl,

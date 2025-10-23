@@ -5,9 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { VinylsModule } from '../vinyls/vinyls.module';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, OrderItem]), VinylsModule],
+    imports: [
+        TypeOrmModule.forFeature([Order, OrderItem]),
+        VinylsModule,
+        EmailModule,
+    ],
     providers: [OrdersService],
     controllers: [OrdersController],
     exports: [OrdersService],
