@@ -19,16 +19,16 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
+    @Column({ type: 'varchar', unique: true })
     googleId: string;
 
-    @Column({ unique: true })
+    @Column({ type: 'varchar', unique: true })
     email: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     firstName: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     lastName: string;
 
     @Column({ type: 'date', nullable: true })
@@ -44,7 +44,7 @@ export class User {
     })
     role: UserRole;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
 
     @CreateDateColumn()

@@ -20,10 +20,10 @@ export class AuditLog {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     entityType: string;
 
-    @Column()
+    @Column({ type: 'uuid' })
     entityId: string;
 
     @Column({
@@ -35,7 +35,7 @@ export class AuditLog {
     @Column({ type: 'json', nullable: true })
     changes: Record<string, unknown> | null;
 
-    @Column()
+    @Column({ type: 'varchar' })
     performedBy: string;
 
     @CreateDateColumn()

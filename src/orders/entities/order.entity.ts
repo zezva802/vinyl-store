@@ -25,7 +25,7 @@ export class Order {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
+    @Column({ type: 'varchar', unique: true })
     stripePaymentIntentId: string;
 
     @Column({
@@ -44,7 +44,7 @@ export class Order {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Column()
+    @Column({ type: 'uuid' })
     userId: string;
 
     @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })

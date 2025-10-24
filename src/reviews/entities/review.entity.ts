@@ -24,7 +24,7 @@ export class Review {
     @Column({ type: 'tinyint', unsigned: true })
     score: number;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
 
     @CreateDateColumn()
@@ -33,10 +33,10 @@ export class Review {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Column()
+    @Column({ type: 'uuid' })
     userId: string;
 
-    @Column()
+    @Column({ type: 'uuid' })
     vinylId: string;
 
     @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })

@@ -13,16 +13,16 @@ export class OrderItem {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ default: 1 })
+    @Column({ type: 'int', default: 1 })
     quantity: number;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     priceAtPurchase: number;
 
-    @Column()
+    @Column({ type: 'uuid' })
     orderId: string;
 
-    @Column()
+    @Column({ type: 'uuid' })
     vinylId: string;
 
     @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })

@@ -15,11 +15,11 @@ export class Vinyl {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     @Index()
     name: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     @Index()
     authorName: string;
 
@@ -32,7 +32,7 @@ export class Vinyl {
     @Column({ type: 'text', nullable: true })
     imageUrl: string;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
 
     @CreateDateColumn()
