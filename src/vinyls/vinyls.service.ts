@@ -130,7 +130,11 @@ export class VinylsService {
 
         Object.assign(vinyl, updateVinylDto);
 
-        return this.vinylRepository.save(vinyl);
+        await this.vinylRepository.save(vinyl);
+
+        return this.vinylRepository.findOne({
+            where: { id },
+        }) as Promise<Vinyl>;
     }
 
     async remove(id: string): Promise<void> {
