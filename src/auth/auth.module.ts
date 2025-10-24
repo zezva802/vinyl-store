@@ -36,7 +36,12 @@ import { TokenBlacklistService } from './token-blacklist.service';
             },
         }),
     ],
-    providers: [AuthService, GoogleStrategy, JwtStrategy, TokenBlacklistService],
+    providers: [
+        AuthService,
+        GoogleStrategy,
+        JwtStrategy,
+        TokenBlacklistService,
+    ],
     controllers: [AuthController],
     exports: [AuthService], //just in case
 })

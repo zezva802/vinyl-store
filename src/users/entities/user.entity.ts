@@ -19,11 +19,14 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'varchar', unique: true })
-    googleId: string;
+    @Column({ type: 'varchar', unique: true, nullable: true })
+    googleId: string | null;
 
     @Column({ type: 'varchar', unique: true })
     email: string;
+
+    @Column({ type: 'varchar', nullable: true, select: false })
+    password: string;
 
     @Column({ type: 'varchar', nullable: true })
     firstName: string;
@@ -32,10 +35,10 @@ export class User {
     lastName: string;
 
     @Column({ type: 'date', nullable: true })
-    birthDate: Date;
+    birthDate: Date | null;
 
     @Column({ type: 'text', nullable: true })
-    avatar: string;
+    avatar: string | null;
 
     @Column({
         type: 'enum',

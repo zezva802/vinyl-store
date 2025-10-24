@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards, Post } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -12,11 +12,47 @@ import {
     ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TokenBlacklistService } from './token-blacklist.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService, private readonly tokenBlacklistService:TokenBlacklistService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly tokenBlacklistService: TokenBlacklistService
+    ) {}
+
+    @Post('register')
+    @ApiOperation({
+        summary: 'Register with email and password',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'User registered successfully',
+        type: LoginResponseDto,
+    })
+    @ApiResponse({ status: 400, description: 'Email already exists' })
+    async register(
+        @Body() registerDto: RegisterDto
+    ): Promise<LoginResponseDto> {
+        return this.authService.register(registerDto);
+    }
+
+    @Post('login')
+    @ApiOperation({
+        summary: 'Login with email and password',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Login successful',
+        type: LoginResponseDto,
+    })
+    @ApiResponse({ status: 401, description: 'Invalid credentials' })
+    async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+        return this.authService.login(loginDto);
+    }
 
     @Get('google')
     @UseGuards(GoogleAuthGuard)
@@ -58,7 +94,7 @@ export class AuthController {
         return user;
     }
 
-    @Post('logout')  // Change from @Get to @Post
+    @Post('logout')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({
@@ -69,7 +105,7 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async logout(@Req() request: Request): Promise<{ message: string }> {
         const authHeader = request.headers['authorization'] as string;
-        const token = authHeader?.split(' ')[1];
+        const token = authHeader.split(' ')[1];
 
         if (token) {
             this.tokenBlacklistService.addToBlacklist(token);
@@ -78,5 +114,26 @@ export class AuthController {
         return {
             message: 'Logged out successfully. Token has been invalidated.',
         };
-}
+    }
+
+    @Post('change-password')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({
+        summary: 'Change password',
+        description:
+            'Change password for local auth users. Requires current password.',
+    })
+    @ApiResponse({ status: 200, description: 'Password changed successfully' })
+    @ApiResponse({
+        status: 400,
+        description: 'Bad request (passwords do not match, OAuth user, etc.)',
+    })
+    @ApiResponse({ status: 401, description: 'Current password incorrect' })
+    async changePassword(
+        @CurrentUser() user: User,
+        @Body() changePasswordDto: ChangePasswordDto
+    ): Promise<{ message: string }> {
+        return this.authService.changePassword(user.id, changePasswordDto);
+    }
 }
