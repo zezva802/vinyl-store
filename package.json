@@ -20,6 +20,7 @@
     "migration:revert": "npm run typeorm -- -d src/database/typeorm.config.ts migration:revert",
     "migration:show": "npm run typeorm -- -d src/database/typeorm.config.ts migration:show",
     "seed": "ts-node -r tsconfig-paths/register src/database/seeds/run-seed.ts",
+    "heroku-postbuild": "npm run build && npm run migration:run",
     "prepare": "husky"
   },
   "dependencies": {
