@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -11,11 +11,12 @@ import {
     ApiResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService, private readonly tokenBlacklistService:TokenBlacklistService) {}
 
     @Get('google')
     @UseGuards(GoogleAuthGuard)
@@ -57,16 +58,25 @@ export class AuthController {
         return user;
     }
 
-    @Get('logout')
+    @Post('logout')  // Change from @Get to @Post
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @ApiOperation({
-        summary: 'Logout',
-        description: 'Client should remove JWT token from storage',
+        summary: 'Logout and invalidate token',
+        description: 'Adds current token to blacklist',
     })
     @ApiResponse({ status: 200, description: 'Logout successful' })
-    async logout(): Promise<{ message: string }> {
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    async logout(@Req() request: Request): Promise<{ message: string }> {
+        const authHeader = request.headers['authorization'] as string;
+        const token = authHeader?.split(' ')[1];
+
+        if (token) {
+            this.tokenBlacklistService.addToBlacklist(token);
+        }
+
         return {
-            message:
-                'Logged out successfully. Please remove token from client.',
+            message: 'Logged out successfully. Token has been invalidated.',
         };
-    }
+}
 }

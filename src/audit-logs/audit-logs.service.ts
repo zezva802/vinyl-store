@@ -39,6 +39,12 @@ export class AuditLogsService {
 
         if (entityType) {
             queryBuilder.andWhere('audit_log.entityType = :entityType', {
+                entityType,
+            });
+        }
+
+        if (entityId) {
+            queryBuilder.andWhere('audit_log.entityId = :entityId', {
                 entityId,
             });
         }
