@@ -11,6 +11,7 @@ import { OrdersModule } from './orders/orders.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { EmailModule } from './email/email.module';
 import { DiscogsModule } from './discogs/discogs.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { DiscogsModule } from './discogs/discogs.module';
 
         EmailModule,
         DiscogsModule,
+        TelegramModule
     ],
     controllers: [AppController],
     providers: [AppService],
