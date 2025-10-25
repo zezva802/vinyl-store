@@ -30,7 +30,13 @@ export class Vinyl {
     price: number;
 
     @Column({ type: 'text', nullable: true })
-    imageUrl: string;
+    imageUrl: string | null;
+
+    @Column({ type: 'varchar', nullable: true })
+    discogsId: string | null;
+
+    @Column({ type: 'decimal', precision: 3, scale: 2, nullable: true })
+    discogsScore: number | null;
 
     @Column({ type: 'boolean', default: false })
     isDeleted: boolean;

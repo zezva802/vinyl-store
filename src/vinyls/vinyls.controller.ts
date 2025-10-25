@@ -33,6 +33,7 @@ import {
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { OptionalJwtAuthGuard } from 'src/auth/guards/optional-jwt-auth.guard';
+import { CreateFromDiscogsDto } from './dto/create-from-discogs.dto';
 
 @ApiTags('vinyls')
 @Controller('vinyls')
@@ -50,6 +51,27 @@ export class VinylsController {
     @ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
     async create(@Body() createVinylDto: CreateVinylDto): Promise<Vinyl> {
         return this.vinylsService.create(createVinylDto);
+    }
+
+    @Post('from-discogs')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({
+        summary: 'Create vinyl from Discogs (Admin only)',
+        description: 'Import a vinyl record from Discogs database',
+    })
+    @ApiResponse({ status: 201, description: 'Vinyl created from Discogs' })
+    @ApiResponse({ status: 400, description: 'Vinyl already exists or invalid Discogs ID' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
+    async createFromDiscogs(
+        @Body() createFromDiscogsDto: CreateFromDiscogsDto
+    ): Promise<Vinyl> {
+        return this.vinylsService.createFromDiscogs(
+            createFromDiscogsDto.discogsId,
+            createFromDiscogsDto.price
+        );
     }
 
     @Get()

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vinyl } from './entities/vinyl.entity';
@@ -6,12 +6,14 @@ import { CreateVinylDto } from './dto/create-vinyl.dto';
 import { QueryVinylDto } from './dto/query-vinyl.dto';
 import { PaginatedVinyls } from './interfaces/paginated-vinyls.interface';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
+import { DiscogsService } from 'src/discogs/discogs.service';
 
 @Injectable()
 export class VinylsService {
     constructor(
         @InjectRepository(Vinyl)
-        private readonly vinylRepository: Repository<Vinyl>
+        private readonly vinylRepository: Repository<Vinyl>,
+        private readonly discogsService: DiscogsService
     ) {}
 
     async create(createVinylDto: CreateVinylDto): Promise<Vinyl> {
@@ -166,5 +168,28 @@ export class VinylsService {
             ...vinyl,
             averageScore: Math.round(averageScore * 10) / 10,
         };
+    }
+
+    async createFromDiscogs(discogsId: string, price: number): Promise<Vinyl> {
+        const existing = await this.vinylRepository.findOne({
+            where: { discogsId, isDeleted: false },
+        });
+
+        if (existing) {
+            throw new BadRequestException(
+                'This Discogs release already exists in the store'
+            );
+        }
+
+        const release = await this.discogsService.getRelease(discogsId);
+
+        const vinylData = this.discogsService.formatReleaseForVinyl(release);
+
+        const vinyl = this.vinylRepository.create({
+            ...vinylData,
+            price,
+        });
+
+        return this.vinylRepository.save(vinyl);
     }
 }

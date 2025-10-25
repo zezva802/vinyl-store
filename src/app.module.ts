@@ -10,6 +10,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { OrdersModule } from './orders/orders.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { EmailModule } from './email/email.module';
+import { DiscogsModule } from './discogs/discogs.module';
 
 @Module({
     imports: [
@@ -53,6 +54,7 @@ import { EmailModule } from './email/email.module';
         AuditLogsModule,
 
         EmailModule,
+        DiscogsModule
     ],
     controllers: [AppController],
     providers: [AppService],
