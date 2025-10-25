@@ -32,16 +32,19 @@ export class DiscogsService {
         page: number = 1
     ): Promise<DiscogsSearchResponse> {
         try {
-            const response = await axios.get(`${this.baseUrl}/database/search`, {
-                headers: this.getHeaders(),
-                params: {
-                    q: query,
-                    type: 'release',
-                    format: 'vinyl',
-                    page,
-                    per_page: 20,
-                },
-            });
+            const response = await axios.get(
+                `${this.baseUrl}/database/search`,
+                {
+                    headers: this.getHeaders(),
+                    params: {
+                        q: query,
+                        type: 'release',
+                        format: 'vinyl',
+                        page,
+                        per_page: 20,
+                    },
+                }
+            );
 
             return {
                 results: response.data.results,

@@ -54,7 +54,7 @@ import { DiscogsModule } from './discogs/discogs.module';
         AuditLogsModule,
 
         EmailModule,
-        DiscogsModule
+        DiscogsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

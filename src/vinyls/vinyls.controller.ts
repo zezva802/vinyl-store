@@ -62,7 +62,10 @@ export class VinylsController {
         description: 'Import a vinyl record from Discogs database',
     })
     @ApiResponse({ status: 201, description: 'Vinyl created from Discogs' })
-    @ApiResponse({ status: 400, description: 'Vinyl already exists or invalid Discogs ID' })
+    @ApiResponse({
+        status: 400,
+        description: 'Vinyl already exists or invalid Discogs ID',
+    })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
     async createFromDiscogs(

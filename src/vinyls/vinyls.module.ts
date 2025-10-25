@@ -7,7 +7,11 @@ import { AuditLogsModule } from 'src/audit-logs/audit-logs.module';
 import { DiscogsModule } from 'src/discogs/discogs.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Vinyl]), AuditLogsModule, DiscogsModule],
+    imports: [
+        TypeOrmModule.forFeature([Vinyl]),
+        AuditLogsModule,
+        DiscogsModule,
+    ],
     providers: [VinylsService],
     controllers: [VinylsController],
     exports: [VinylsService],

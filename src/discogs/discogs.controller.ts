@@ -52,7 +52,8 @@ export class DiscogsController {
     @Get('release/:id')
     @ApiOperation({
         summary: 'Get Discogs release details (Admin only)',
-        description: 'Get detailed information about a specific Discogs release',
+        description:
+            'Get detailed information about a specific Discogs release',
     })
     @ApiResponse({
         status: 200,
