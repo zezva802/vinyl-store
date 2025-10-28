@@ -100,7 +100,7 @@ describe('Users E2E Tests', () => {
 
             const profile = await response.json();
             assert.strictEqual(profile.firstName, 'JustFirstName');
-            assert.strictEqual(profile.lastName, 'Name'); // Should remain unchanged
+            assert.strictEqual(profile.lastName, 'Name');
         });
 
         it('should reject invalid birth date', async () => {

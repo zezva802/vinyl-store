@@ -335,7 +335,6 @@ describe('Vinyls E2E Tests', () => {
                 }),
             });
             const vinyl = await response.json();
-            console.log(vinyl);
             vinylToDelete = vinyl.id;
         });
 
