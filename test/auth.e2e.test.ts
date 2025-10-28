@@ -1,11 +1,6 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert';
-import {
-    TestSetup,
-    API_BASE_URL,
-    TEST_USERS,
-    TestUser,
-} from './test-setup';
+import { TestSetup, API_BASE_URL, TEST_USERS, TestUser } from './test-setup';
 
 describe('Auth E2E Tests', () => {
     let adminUser: TestUser;
@@ -86,10 +81,10 @@ describe('Auth E2E Tests', () => {
             };
 
             const dataSource = TestSetup.getDataSource();
-            await dataSource.query(
-                'UPDATE users SET role = ? WHERE id = ?',
-                ['admin', adminUser.id]
-            );
+            await dataSource.query('UPDATE users SET role = ? WHERE id = ?', [
+                'admin',
+                adminUser.id,
+            ]);
 
             adminUser.role = 'admin';
         });

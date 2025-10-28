@@ -108,7 +108,9 @@ describe('TelegramService', () => {
                 discogsScore: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             const result = await service.postVinylToChannel(vinyl);
 
@@ -127,7 +129,9 @@ describe('TelegramService', () => {
                 imageUrl: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -147,7 +151,9 @@ describe('TelegramService', () => {
                 imageUrl: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -170,7 +176,9 @@ describe('TelegramService', () => {
                 discogsScore: 4.8,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -191,7 +199,9 @@ describe('TelegramService', () => {
                 discogsScore: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -246,7 +256,9 @@ describe('TelegramService', () => {
                 imageUrl: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -264,7 +276,9 @@ describe('TelegramService', () => {
                 imageUrl: null,
             };
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.postVinylToChannel(vinyl);
 
@@ -280,7 +294,9 @@ describe('TelegramService', () => {
         it('should send custom message successfully', async () => {
             const message = 'Hello from the store!';
 
-            mockBot.sendMessage.mock.mockImplementation(() => Promise.resolve());
+            mockBot.sendMessage.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             const result = await service.sendCustomMessage(message);
 

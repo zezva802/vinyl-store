@@ -6,8 +6,6 @@ const mockAxios = {
 import { DiscogsService } from '../../src/discogs/discogs.service';
 import axios from 'axios';
 
-
-
 describe('DiscogsService', () => {
     let service: any;
     let configService: any;
@@ -32,15 +30,12 @@ describe('DiscogsService', () => {
                 get: mock.fn(() => null),
             };
 
-            assert.throws(
-                () => new DiscogsService(badConfig),
-                { message: 'DISCOGS_TOKEN is not defined' }
-            );
+            assert.throws(() => new DiscogsService(badConfig), {
+                message: 'DISCOGS_TOKEN is not defined',
+            });
         });
 
         it('should initialize with token from config', () => {
-            
-
             assert.ok(service);
             assert.strictEqual(configService.get.mock.callCount(), 1);
         });
@@ -62,7 +57,9 @@ describe('DiscogsService', () => {
                 },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             const result = await service.searchVinyls('Beatles', 1);
 
@@ -73,10 +70,15 @@ describe('DiscogsService', () => {
 
         it('should use correct search parameters', async () => {
             const mockResponse = {
-                data: { results: [], pagination: { page: 1, pages: 0, items: 0 } },
+                data: {
+                    results: [],
+                    pagination: { page: 1, pages: 0, items: 0 },
+                },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             await service.searchVinyls('Pink Floyd', 2);
 
@@ -91,24 +93,39 @@ describe('DiscogsService', () => {
 
         it('should include authorization headers', async () => {
             const mockResponse = {
-                data: { results: [], pagination: { page: 1, pages: 0, items: 0 } },
+                data: {
+                    results: [],
+                    pagination: { page: 1, pages: 0, items: 0 },
+                },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             await service.searchVinyls('test', 1);
 
             const getCall = mockAxios.get.mock.calls[0].arguments;
-            assert.ok(getCall[1].headers.Authorization.includes('test-token-123'));
-            assert.strictEqual(getCall[1].headers['User-Agent'], 'VinylStoreAPI/1.0');
+            assert.ok(
+                getCall[1].headers.Authorization.includes('test-token-123')
+            );
+            assert.strictEqual(
+                getCall[1].headers['User-Agent'],
+                'VinylStoreAPI/1.0'
+            );
         });
 
         it('should default to page 1 if not provided', async () => {
             const mockResponse = {
-                data: { results: [], pagination: { page: 1, pages: 0, items: 0 } },
+                data: {
+                    results: [],
+                    pagination: { page: 1, pages: 0, items: 0 },
+                },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             await service.searchVinyls('test');
 
@@ -121,10 +138,9 @@ describe('DiscogsService', () => {
                 throw new Error('API Error');
             });
 
-            await assert.rejects(
-                () => service.searchVinyls('test', 1),
-                { message: /Discogs search failed/ }
-            );
+            await assert.rejects(() => service.searchVinyls('test', 1), {
+                message: /Discogs search failed/,
+            });
         });
     });
 
@@ -141,7 +157,9 @@ describe('DiscogsService', () => {
                 data: mockRelease,
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             const result = await service.getRelease('123456');
 
@@ -155,7 +173,9 @@ describe('DiscogsService', () => {
                 data: { id: 123, title: 'Album' },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             await service.getRelease('123456');
 
@@ -168,12 +188,16 @@ describe('DiscogsService', () => {
                 data: { id: 123, title: 'Album' },
             };
 
-            mockAxios.get.mock.mockImplementation(() => Promise.resolve(mockResponse));
+            mockAxios.get.mock.mockImplementation(() =>
+                Promise.resolve(mockResponse)
+            );
 
             await service.getRelease('123456');
 
             const getCall = mockAxios.get.mock.calls[0].arguments;
-            assert.ok(getCall[1].headers.Authorization.includes('test-token-123'));
+            assert.ok(
+                getCall[1].headers.Authorization.includes('test-token-123')
+            );
         });
 
         it('should throw error on fetch failure', async () => {
@@ -181,10 +205,9 @@ describe('DiscogsService', () => {
                 throw new Error('Not Found');
             });
 
-            await assert.rejects(
-                () => service.getRelease('invalid-id'),
-                { message: /Failed to fetch Discogs release/ }
-            );
+            await assert.rejects(() => service.getRelease('invalid-id'), {
+                message: /Failed to fetch Discogs release/,
+            });
         });
     });
 
@@ -208,8 +231,14 @@ describe('DiscogsService', () => {
 
             assert.strictEqual(result.name, 'Thriller');
             assert.strictEqual(result.authorName, 'Michael Jackson');
-            assert.strictEqual(result.description, 'Best-selling album of all time');
-            assert.strictEqual(result.imageUrl, 'https://example.com/image.jpg');
+            assert.strictEqual(
+                result.description,
+                'Best-selling album of all time'
+            );
+            assert.strictEqual(
+                result.imageUrl,
+                'https://example.com/image.jpg'
+            );
             assert.strictEqual(result.discogsId, '123456');
             assert.strictEqual(result.discogsScore, 4.5);
         });
@@ -228,7 +257,10 @@ describe('DiscogsService', () => {
 
             const result = service.formatReleaseForVinyl(release);
 
-            assert.strictEqual(result.authorName, 'Artist One, Artist Two, Artist Three');
+            assert.strictEqual(
+                result.authorName,
+                'Artist One, Artist Two, Artist Three'
+            );
         });
 
         it('should use default description when notes missing', () => {
@@ -241,7 +273,10 @@ describe('DiscogsService', () => {
 
             const result = service.formatReleaseForVinyl(release);
 
-            assert.strictEqual(result.description, 'Test Artist - Test Album (2000)');
+            assert.strictEqual(
+                result.description,
+                'Test Artist - Test Album (2000)'
+            );
         });
 
         it('should handle missing images', () => {
@@ -325,7 +360,10 @@ describe('DiscogsService', () => {
 
             const result = service.formatReleaseForVinyl(release);
 
-            assert.strictEqual(result.imageUrl, 'https://example.com/first.jpg');
+            assert.strictEqual(
+                result.imageUrl,
+                'https://example.com/first.jpg'
+            );
         });
     });
 });

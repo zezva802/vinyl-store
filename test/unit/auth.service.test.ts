@@ -43,14 +43,24 @@ describe('AuthService', () => {
                 role: 'user',
             };
 
-            usersService.findByGoogleId.mock.mockImplementation(() => Promise.resolve(null));
-            usersService.createFromGoogle.mock.mockImplementation(() => Promise.resolve(createdUser));
+            usersService.findByGoogleId.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
+            usersService.createFromGoogle.mock.mockImplementation(() =>
+                Promise.resolve(createdUser)
+            );
 
             const result = await service.googleLogin(googleUser);
 
             assert.strictEqual(usersService.findByGoogleId.mock.callCount(), 1);
-            assert.strictEqual(usersService.createFromGoogle.mock.callCount(), 1);
-            assert.strictEqual(usersService.updateFromGoogle.mock.callCount(), 0);
+            assert.strictEqual(
+                usersService.createFromGoogle.mock.callCount(),
+                1
+            );
+            assert.strictEqual(
+                usersService.updateFromGoogle.mock.callCount(),
+                0
+            );
             assert.strictEqual(result.accessToken, 'mock-jwt-token');
             assert.strictEqual(result.user.email, 'test@gmail.com');
         });
@@ -78,14 +88,24 @@ describe('AuthService', () => {
                 ...googleUser,
             };
 
-            usersService.findByGoogleId.mock.mockImplementation(() => Promise.resolve(existingUser));
-            usersService.updateFromGoogle.mock.mockImplementation(() => Promise.resolve(updatedUser));
+            usersService.findByGoogleId.mock.mockImplementation(() =>
+                Promise.resolve(existingUser)
+            );
+            usersService.updateFromGoogle.mock.mockImplementation(() =>
+                Promise.resolve(updatedUser)
+            );
 
             const result = await service.googleLogin(googleUser);
 
             assert.strictEqual(usersService.findByGoogleId.mock.callCount(), 1);
-            assert.strictEqual(usersService.updateFromGoogle.mock.callCount(), 1);
-            assert.strictEqual(usersService.createFromGoogle.mock.callCount(), 0);
+            assert.strictEqual(
+                usersService.updateFromGoogle.mock.callCount(),
+                1
+            );
+            assert.strictEqual(
+                usersService.createFromGoogle.mock.callCount(),
+                0
+            );
             assert.strictEqual(result.user.email, 'updated@gmail.com');
         });
 
@@ -100,8 +120,12 @@ describe('AuthService', () => {
 
             const user = { id: 'user-1', ...googleUser, role: 'user' };
 
-            usersService.findByGoogleId.mock.mockImplementation(() => Promise.resolve(null));
-            usersService.createFromGoogle.mock.mockImplementation(() => Promise.resolve(user));
+            usersService.findByGoogleId.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
+            usersService.createFromGoogle.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
 
             const result = await service.googleLogin(googleUser);
 
@@ -128,8 +152,12 @@ describe('AuthService', () => {
                 role: 'user',
             };
 
-            usersService.findByEmail.mock.mockImplementation(() => Promise.resolve(null));
-            usersService.createLocal.mock.mockImplementation(() => Promise.resolve(createdUser));
+            usersService.findByEmail.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
+            usersService.createLocal.mock.mockImplementation(() =>
+                Promise.resolve(createdUser)
+            );
 
             const result = await service.register(registerDto);
 
@@ -149,12 +177,14 @@ describe('AuthService', () => {
 
             const existingUser = { id: 'user-1', email: registerDto.email };
 
-            usersService.findByEmail.mock.mockImplementation(() => Promise.resolve(existingUser));
-
-            await assert.rejects(
-                () => service.register(registerDto),
-                { name: 'BadRequestException', message: 'Email already exists' }
+            usersService.findByEmail.mock.mockImplementation(() =>
+                Promise.resolve(existingUser)
             );
+
+            await assert.rejects(() => service.register(registerDto), {
+                name: 'BadRequestException',
+                message: 'Email already exists',
+            });
 
             assert.strictEqual(usersService.createLocal.mock.callCount(), 0);
         });
@@ -169,12 +199,17 @@ describe('AuthService', () => {
 
             const user = { id: 'user-1', ...registerDto, role: 'user' };
 
-            usersService.findByEmail.mock.mockImplementation(() => Promise.resolve(null));
-            usersService.createLocal.mock.mockImplementation(() => Promise.resolve(user));
+            usersService.findByEmail.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
+            usersService.createLocal.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
 
             await service.register(registerDto);
 
-            const createLocalCall = usersService.createLocal.mock.calls[0].arguments;
+            const createLocalCall =
+                usersService.createLocal.mock.calls[0].arguments;
             assert.strictEqual(createLocalCall[0], registerDto.email);
             assert.strictEqual(createLocalCall[1], registerDto.password);
             assert.strictEqual(createLocalCall[2], registerDto.firstName);
@@ -199,13 +234,23 @@ describe('AuthService', () => {
                 role: 'user',
             };
 
-            usersService.findByEmailWithPassword.mock.mockImplementation(() => Promise.resolve(user));
-            usersService.validatePassword.mock.mockImplementation(() => Promise.resolve(true));
+            usersService.findByEmailWithPassword.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
+            usersService.validatePassword.mock.mockImplementation(() =>
+                Promise.resolve(true)
+            );
 
             const result = await service.login(loginDto);
 
-            assert.strictEqual(usersService.findByEmailWithPassword.mock.callCount(), 1);
-            assert.strictEqual(usersService.validatePassword.mock.callCount(), 1);
+            assert.strictEqual(
+                usersService.findByEmailWithPassword.mock.callCount(),
+                1
+            );
+            assert.strictEqual(
+                usersService.validatePassword.mock.callCount(),
+                1
+            );
             assert.strictEqual(result.accessToken, 'mock-jwt-token');
             assert.strictEqual(result.user.email, loginDto.email);
         });
@@ -216,14 +261,19 @@ describe('AuthService', () => {
                 password: 'Password123!',
             };
 
-            usersService.findByEmailWithPassword.mock.mockImplementation(() => Promise.resolve(null));
-
-            await assert.rejects(
-                () => service.login(loginDto),
-                { name: 'UnauthorizedException', message: 'Invalid credentials' }
+            usersService.findByEmailWithPassword.mock.mockImplementation(() =>
+                Promise.resolve(null)
             );
 
-            assert.strictEqual(usersService.validatePassword.mock.callCount(), 0);
+            await assert.rejects(() => service.login(loginDto), {
+                name: 'UnauthorizedException',
+                message: 'Invalid credentials',
+            });
+
+            assert.strictEqual(
+                usersService.validatePassword.mock.callCount(),
+                0
+            );
         });
 
         it('should throw UnauthorizedException if password invalid', async () => {
@@ -238,13 +288,17 @@ describe('AuthService', () => {
                 password: 'hashed-password',
             };
 
-            usersService.findByEmailWithPassword.mock.mockImplementation(() => Promise.resolve(user));
-            usersService.validatePassword.mock.mockImplementation(() => Promise.resolve(false));
-
-            await assert.rejects(
-                () => service.login(loginDto),
-                { name: 'UnauthorizedException', message: 'Invalid credentials' }
+            usersService.findByEmailWithPassword.mock.mockImplementation(() =>
+                Promise.resolve(user)
             );
+            usersService.validatePassword.mock.mockImplementation(() =>
+                Promise.resolve(false)
+            );
+
+            await assert.rejects(() => service.login(loginDto), {
+                name: 'UnauthorizedException',
+                message: 'Invalid credentials',
+            });
         });
 
         it('should call validatePassword with correct parameters', async () => {
@@ -253,14 +307,23 @@ describe('AuthService', () => {
                 password: 'Password123!',
             };
 
-            const user = { id: 'user-1', email: loginDto.email, password: 'hashed' };
+            const user = {
+                id: 'user-1',
+                email: loginDto.email,
+                password: 'hashed',
+            };
 
-            usersService.findByEmailWithPassword.mock.mockImplementation(() => Promise.resolve(user));
-            usersService.validatePassword.mock.mockImplementation(() => Promise.resolve(true));
+            usersService.findByEmailWithPassword.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
+            usersService.validatePassword.mock.mockImplementation(() =>
+                Promise.resolve(true)
+            );
 
             await service.login(loginDto);
 
-            const validateCall = usersService.validatePassword.mock.calls[0].arguments;
+            const validateCall =
+                usersService.validatePassword.mock.calls[0].arguments;
             assert.strictEqual(validateCall[0], user);
             assert.strictEqual(validateCall[1], loginDto.password);
         });
@@ -276,7 +339,9 @@ describe('AuthService', () => {
 
             const user = { id: 'user-1', email: 'test@test.com' };
 
-            usersService.findById.mock.mockImplementation(() => Promise.resolve(user));
+            usersService.findById.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
 
             const result = await service.validateUser(payload);
 
@@ -291,7 +356,9 @@ describe('AuthService', () => {
                 role: 'user',
             };
 
-            usersService.findById.mock.mockImplementation(() => Promise.resolve(null));
+            usersService.findById.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             const result = await service.validateUser(payload);
 
@@ -308,16 +375,25 @@ describe('AuthService', () => {
                 confirmPassword: 'NewPass456!',
             };
 
-            usersService.changePassword.mock.mockImplementation(() => Promise.resolve());
+            usersService.changePassword.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
-            const result = await service.changePassword(userId, changePasswordDto);
+            const result = await service.changePassword(
+                userId,
+                changePasswordDto
+            );
 
             assert.strictEqual(usersService.changePassword.mock.callCount(), 1);
             assert.strictEqual(result.message, 'Password changed successfully');
 
-            const changeCall = usersService.changePassword.mock.calls[0].arguments;
+            const changeCall =
+                usersService.changePassword.mock.calls[0].arguments;
             assert.strictEqual(changeCall[0], userId);
-            assert.strictEqual(changeCall[1], changePasswordDto.currentPassword);
+            assert.strictEqual(
+                changeCall[1],
+                changePasswordDto.currentPassword
+            );
             assert.strictEqual(changeCall[2], changePasswordDto.newPassword);
         });
 
@@ -331,7 +407,10 @@ describe('AuthService', () => {
 
             await assert.rejects(
                 () => service.changePassword(userId, changePasswordDto),
-                { name: 'BadRequestException', message: 'New passwords do not match' }
+                {
+                    name: 'BadRequestException',
+                    message: 'New passwords do not match',
+                }
             );
 
             assert.strictEqual(usersService.changePassword.mock.callCount(), 0);
@@ -347,7 +426,11 @@ describe('AuthService', () => {
 
             await assert.rejects(
                 () => service.changePassword(userId, changePasswordDto),
-                { name: 'BadRequestException', message: 'New password must be different from current password' }
+                {
+                    name: 'BadRequestException',
+                    message:
+                        'New password must be different from current password',
+                }
             );
 
             assert.strictEqual(usersService.changePassword.mock.callCount(), 0);

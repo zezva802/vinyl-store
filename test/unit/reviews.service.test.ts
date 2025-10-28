@@ -32,10 +32,16 @@ describe('ReviewsService', () => {
             };
 
             const mockVinyl = { id: 'vinyl-1', name: 'Album' };
-            vinylsService.findOne.mock.mockImplementation(() => Promise.resolve(mockVinyl));
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            vinylsService.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockVinyl)
+            );
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
             repository.create.mock.mockImplementation((data: any) => data);
-            repository.save.mock.mockImplementation((review: any) => Promise.resolve(review));
+            repository.save.mock.mockImplementation((review: any) =>
+                Promise.resolve(review)
+            );
 
             const result = await service.create(userId, dto);
 
@@ -54,15 +60,23 @@ describe('ReviewsService', () => {
             };
 
             const mockVinyl = { id: 'vinyl-1', name: 'Album' };
-            const existingReview = { id: 'review-1', userId, vinylId: 'vinyl-1' };
+            const existingReview = {
+                id: 'review-1',
+                userId,
+                vinylId: 'vinyl-1',
+            };
 
-            vinylsService.findOne.mock.mockImplementation(() => Promise.resolve(mockVinyl));
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(existingReview));
-
-            await assert.rejects(
-                () => service.create(userId, dto),
-                { name: 'BadRequestException', message: 'You have already reviewed this vinyl' }
+            vinylsService.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockVinyl)
             );
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(existingReview)
+            );
+
+            await assert.rejects(() => service.create(userId, dto), {
+                name: 'BadRequestException',
+                message: 'You have already reviewed this vinyl',
+            });
 
             assert.strictEqual(repository.create.mock.callCount(), 0);
         });
@@ -79,10 +93,9 @@ describe('ReviewsService', () => {
                 throw { name: 'NotFoundException', message: 'Vinyl not found' };
             });
 
-            await assert.rejects(
-                () => service.create(userId, dto),
-                { name: 'NotFoundException' }
-            );
+            await assert.rejects(() => service.create(userId, dto), {
+                name: 'NotFoundException',
+            });
         });
     });
 
@@ -94,16 +107,32 @@ describe('ReviewsService', () => {
             ];
 
             const queryBuilder = {
-                leftJoinAndSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
-                orderBy: mock.fn(function() { return this; }),
-                skip: mock.fn(function() { return this; }),
-                take: mock.fn(function() { return this; }),
-                getManyAndCount: mock.fn(() => Promise.resolve([mockReviews, 2])),
+                leftJoinAndSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
+                orderBy: mock.fn(function () {
+                    return this;
+                }),
+                skip: mock.fn(function () {
+                    return this;
+                }),
+                take: mock.fn(function () {
+                    return this;
+                }),
+                getManyAndCount: mock.fn(() =>
+                    Promise.resolve([mockReviews, 2])
+                ),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             const result = await service.findAll({});
 
@@ -116,16 +145,30 @@ describe('ReviewsService', () => {
 
         it('should filter by vinylId', async () => {
             const queryBuilder = {
-                leftJoinAndSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
-                orderBy: mock.fn(function() { return this; }),
-                skip: mock.fn(function() { return this; }),
-                take: mock.fn(function() { return this; }),
+                leftJoinAndSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
+                orderBy: mock.fn(function () {
+                    return this;
+                }),
+                skip: mock.fn(function () {
+                    return this;
+                }),
+                take: mock.fn(function () {
+                    return this;
+                }),
                 getManyAndCount: mock.fn(() => Promise.resolve([[], 0])),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await service.findAll({ vinylId: 'vinyl-123' });
 
@@ -134,16 +177,30 @@ describe('ReviewsService', () => {
 
         it('should apply pagination', async () => {
             const queryBuilder = {
-                leftJoinAndSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
-                orderBy: mock.fn(function() { return this; }),
-                skip: mock.fn(function() { return this; }),
-                take: mock.fn(function() { return this; }),
+                leftJoinAndSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
+                orderBy: mock.fn(function () {
+                    return this;
+                }),
+                skip: mock.fn(function () {
+                    return this;
+                }),
+                take: mock.fn(function () {
+                    return this;
+                }),
                 getManyAndCount: mock.fn(() => Promise.resolve([[], 0])),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await service.findAll({ page: 2, limit: 10 });
 
@@ -153,16 +210,30 @@ describe('ReviewsService', () => {
 
         it('should order by createdAt DESC', async () => {
             const queryBuilder = {
-                leftJoinAndSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
-                orderBy: mock.fn(function() { return this; }),
-                skip: mock.fn(function() { return this; }),
-                take: mock.fn(function() { return this; }),
+                leftJoinAndSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
+                orderBy: mock.fn(function () {
+                    return this;
+                }),
+                skip: mock.fn(function () {
+                    return this;
+                }),
+                take: mock.fn(function () {
+                    return this;
+                }),
                 getManyAndCount: mock.fn(() => Promise.resolve([[], 0])),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await service.findAll({});
 
@@ -176,7 +247,9 @@ describe('ReviewsService', () => {
     describe('findOne', () => {
         it('should find review by id', async () => {
             const mockReview = { id: 'review-1', comment: 'Great!' };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockReview));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockReview)
+            );
 
             const result = await service.findOne('review-1');
 
@@ -185,22 +258,26 @@ describe('ReviewsService', () => {
         });
 
         it('should throw NotFoundException when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
-
-            await assert.rejects(
-                () => service.findOne('not-exist'),
-                { name: 'NotFoundException', message: 'Review not found' }
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
             );
+
+            await assert.rejects(() => service.findOne('not-exist'), {
+                name: 'NotFoundException',
+                message: 'Review not found',
+            });
         });
 
         it('should include user and vinyl relations', async () => {
-            const mockReview = { 
-                id: 'review-1', 
+            const mockReview = {
+                id: 'review-1',
                 comment: 'Great!',
                 user: { id: 'user-1', firstName: 'John' },
-                vinyl: { id: 'vinyl-1', name: 'Album' }
+                vinyl: { id: 'vinyl-1', name: 'Album' },
             };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockReview));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockReview)
+            );
 
             await service.findOne('review-1');
 
@@ -213,10 +290,18 @@ describe('ReviewsService', () => {
     describe('remove', () => {
         it('should allow user to delete own review', async () => {
             const userId = 'user-1';
-            const review = { id: 'review-1', userId: 'user-1', isDeleted: false };
+            const review = {
+                id: 'review-1',
+                userId: 'user-1',
+                isDeleted: false,
+            };
 
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(review));
-            repository.save.mock.mockImplementation((r: any) => Promise.resolve(r));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(review)
+            );
+            repository.save.mock.mockImplementation((r: any) =>
+                Promise.resolve(r)
+            );
 
             await service.remove('review-1', userId, false);
 
@@ -227,10 +312,18 @@ describe('ReviewsService', () => {
 
         it('should allow admin to delete any review', async () => {
             const userId = 'admin-1';
-            const review = { id: 'review-1', userId: 'other-user', isDeleted: false };
+            const review = {
+                id: 'review-1',
+                userId: 'other-user',
+                isDeleted: false,
+            };
 
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(review));
-            repository.save.mock.mockImplementation((r: any) => Promise.resolve(r));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(review)
+            );
+            repository.save.mock.mockImplementation((r: any) =>
+                Promise.resolve(r)
+            );
 
             await service.remove('review-1', userId, true);
 
@@ -241,20 +334,31 @@ describe('ReviewsService', () => {
 
         it('should throw ForbiddenException if user tries to delete others review', async () => {
             const userId = 'user-1';
-            const review = { id: 'review-1', userId: 'user-2', isDeleted: false };
+            const review = {
+                id: 'review-1',
+                userId: 'user-2',
+                isDeleted: false,
+            };
 
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(review));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(review)
+            );
 
             await assert.rejects(
                 () => service.remove('review-1', userId, false),
-                { name: 'ForbiddenException', message: 'You can only delete your own reviews' }
+                {
+                    name: 'ForbiddenException',
+                    message: 'You can only delete your own reviews',
+                }
             );
 
             assert.strictEqual(repository.save.mock.callCount(), 0);
         });
 
         it('should throw NotFoundException when review not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             await assert.rejects(
                 () => service.remove('not-exist', 'user-1', false),
@@ -263,7 +367,9 @@ describe('ReviewsService', () => {
         });
 
         it('should not delete already deleted review', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             await assert.rejects(
                 () => service.remove('deleted-review', 'user-1', false),

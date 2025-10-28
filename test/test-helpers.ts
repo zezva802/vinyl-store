@@ -32,10 +32,7 @@ export async function createTestUser(
 /**
  * Login and get token
  */
-export async function login(
-    email: string,
-    password: string
-): Promise<string> {
+export async function login(email: string, password: string): Promise<string> {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,10 +156,7 @@ export async function authenticatedRequest(
 /**
  * Assert response status
  */
-export function assertStatus(
-    response: Response,
-    expectedStatus: number
-): void {
+export function assertStatus(response: Response, expectedStatus: number): void {
     if (response.status !== expectedStatus) {
         throw new Error(
             `Expected status ${expectedStatus} but got ${response.status}`
@@ -318,7 +312,8 @@ export function assertSorted<T>(
     for (let i = 0; i < array.length - 1; i++) {
         if (compareFn(array[i], array[i + 1]) > 0) {
             throw new Error(
-                message || `Array not sorted at index ${i}: ${array[i]} > ${array[i + 1]}`
+                message ||
+                    `Array not sorted at index ${i}: ${array[i]} > ${array[i + 1]}`
             );
         }
     }
@@ -440,9 +435,7 @@ export async function searchVinyls(filters: {
         }
     });
 
-    const response = await fetch(
-        `${API_BASE_URL}/vinyls?${params.toString()}`
-    );
+    const response = await fetch(`${API_BASE_URL}/vinyls?${params.toString()}`);
 
     if (!response.ok) {
         throw new Error(`Failed to search vinyls: ${response.statusText}`);

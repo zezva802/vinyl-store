@@ -78,7 +78,10 @@ describe('Users E2E Tests', () => {
             const profile = await response.json();
             assert.strictEqual(profile.firstName, 'Updated');
             assert.strictEqual(profile.lastName, 'Name');
-            assert.strictEqual(profile.avatar, 'https://example.com/avatar.jpg');
+            assert.strictEqual(
+                profile.avatar,
+                'https://example.com/avatar.jpg'
+            );
         });
 
         it('should update partial profile', async () => {

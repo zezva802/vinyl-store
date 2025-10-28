@@ -53,7 +53,7 @@ describe('OrdersService', () => {
         };
 
         // Mock Stripe constructor
-        const StripeConstructor: any = function() {
+        const StripeConstructor: any = function () {
             return mockStripe;
         };
 
@@ -76,18 +76,32 @@ describe('OrdersService', () => {
 
             const mockVinyl = { id: 'vinyl-1', name: 'Album', price: 29.99 };
             const mockOrder = { id: 'order-1', userId, status: 'PENDING' };
-            const mockOrderItem = { id: 'item-1', orderId: 'order-1', vinylId: 'vinyl-1' };
+            const mockOrderItem = {
+                id: 'item-1',
+                orderId: 'order-1',
+                vinylId: 'vinyl-1',
+            };
             const mockPaymentIntent = {
                 id: 'pi_123',
                 client_secret: 'pi_123_secret',
             };
 
-            vinylsService.findOne.mock.mockImplementation(() => Promise.resolve(mockVinyl));
+            vinylsService.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockVinyl)
+            );
             orderRepository.create.mock.mockImplementation((data: any) => data);
-            orderRepository.save.mock.mockImplementation((order: any) => Promise.resolve({ ...order, id: 'order-1' }));
-            orderItemRepository.create.mock.mockImplementation((data: any) => data);
-            orderItemRepository.save.mock.mockImplementation((item: any) => Promise.resolve(item));
-            mockStripe.paymentIntents.create.mock.mockImplementation(() => Promise.resolve(mockPaymentIntent));
+            orderRepository.save.mock.mockImplementation((order: any) =>
+                Promise.resolve({ ...order, id: 'order-1' })
+            );
+            orderItemRepository.create.mock.mockImplementation(
+                (data: any) => data
+            );
+            orderItemRepository.save.mock.mockImplementation((item: any) =>
+                Promise.resolve(item)
+            );
+            mockStripe.paymentIntents.create.mock.mockImplementation(() =>
+                Promise.resolve(mockPaymentIntent)
+            );
 
             const result = await service.createPaymentIntent(userId, dto);
 
@@ -96,7 +110,10 @@ describe('OrdersService', () => {
             assert.strictEqual(result.amount, 2999); // 29.99 * 100
             assert.strictEqual(vinylsService.findOne.mock.callCount(), 1);
             assert.strictEqual(orderRepository.save.mock.callCount(), 2);
-            assert.strictEqual(mockStripe.paymentIntents.create.mock.callCount(), 1);
+            assert.strictEqual(
+                mockStripe.paymentIntents.create.mock.callCount(),
+                1
+            );
         });
 
         it('should throw NotFoundException if vinyl does not exist', async () => {
@@ -105,7 +122,10 @@ describe('OrdersService', () => {
             });
 
             await assert.rejects(
-                () => service.createPaymentIntent('user-1', { vinylId: 'not-exist' }),
+                () =>
+                    service.createPaymentIntent('user-1', {
+                        vinylId: 'not-exist',
+                    }),
                 { name: 'NotFoundException' }
             );
         });
@@ -115,19 +135,34 @@ describe('OrdersService', () => {
             const mockOrder = { id: 'order-1', userId: 'user-1' };
             const mockOrderItem = { id: 'item-1' };
 
-            vinylsService.findOne.mock.mockImplementation(() => Promise.resolve(mockVinyl));
+            vinylsService.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockVinyl)
+            );
             orderRepository.create.mock.mockImplementation((data: any) => data);
-            orderRepository.save.mock.mockImplementation((order: any) => Promise.resolve(mockOrder));
-            orderItemRepository.create.mock.mockImplementation((data: any) => mockOrderItem);
-            orderItemRepository.save.mock.mockImplementation((item: any) => Promise.resolve(item));
+            orderRepository.save.mock.mockImplementation((order: any) =>
+                Promise.resolve(mockOrder)
+            );
+            orderItemRepository.create.mock.mockImplementation(
+                (data: any) => mockOrderItem
+            );
+            orderItemRepository.save.mock.mockImplementation((item: any) =>
+                Promise.resolve(item)
+            );
             mockStripe.paymentIntents.create.mock.mockImplementation(() => {
                 throw new Error('Stripe error');
             });
-            orderRepository.remove.mock.mockImplementation(() => Promise.resolve());
-            orderItemRepository.remove.mock.mockImplementation(() => Promise.resolve());
+            orderRepository.remove.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
+            orderItemRepository.remove.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await assert.rejects(
-                () => service.createPaymentIntent('user-1', { vinylId: 'vinyl-1' }),
+                () =>
+                    service.createPaymentIntent('user-1', {
+                        vinylId: 'vinyl-1',
+                    }),
                 { name: 'BadRequestException' }
             );
 
@@ -140,14 +175,26 @@ describe('OrdersService', () => {
             const mockOrder = { id: 'order-1' };
             const mockPaymentIntent = { id: 'pi_123', client_secret: 'secret' };
 
-            vinylsService.findOne.mock.mockImplementation(() => Promise.resolve(mockVinyl));
+            vinylsService.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockVinyl)
+            );
             orderRepository.create.mock.mockImplementation((data: any) => data);
-            orderRepository.save.mock.mockImplementation((o: any) => Promise.resolve({ ...o, id: 'order-1' }));
-            orderItemRepository.create.mock.mockImplementation((data: any) => data);
-            orderItemRepository.save.mock.mockImplementation((i: any) => Promise.resolve(i));
-            mockStripe.paymentIntents.create.mock.mockImplementation(() => Promise.resolve(mockPaymentIntent));
+            orderRepository.save.mock.mockImplementation((o: any) =>
+                Promise.resolve({ ...o, id: 'order-1' })
+            );
+            orderItemRepository.create.mock.mockImplementation(
+                (data: any) => data
+            );
+            orderItemRepository.save.mock.mockImplementation((i: any) =>
+                Promise.resolve(i)
+            );
+            mockStripe.paymentIntents.create.mock.mockImplementation(() =>
+                Promise.resolve(mockPaymentIntent)
+            );
 
-            const result = await service.createPaymentIntent('user-1', { vinylId: 'vinyl-1' });
+            const result = await service.createPaymentIntent('user-1', {
+                vinylId: 'vinyl-1',
+            });
 
             assert.strictEqual(result.amount, 1999); // 19.99 * 100
         });
@@ -174,16 +221,27 @@ describe('OrdersService', () => {
                 items: [],
             };
 
-            mockStripe.webhooks.constructEvent.mock.mockImplementation(() => mockEvent);
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(mockOrder));
-            orderRepository.save.mock.mockImplementation((o: any) => Promise.resolve(o));
-            emailService.sendOrderConfirmation.mock.mockImplementation(() => Promise.resolve());
+            mockStripe.webhooks.constructEvent.mock.mockImplementation(
+                () => mockEvent
+            );
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockOrder)
+            );
+            orderRepository.save.mock.mockImplementation((o: any) =>
+                Promise.resolve(o)
+            );
+            emailService.sendOrderConfirmation.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.handleWebhook(signature, rawBody);
 
             assert.strictEqual(mockOrder.status, 'completed');
             assert.strictEqual(orderRepository.save.mock.callCount(), 1);
-            assert.strictEqual(emailService.sendOrderConfirmation.mock.callCount(), 1);
+            assert.strictEqual(
+                emailService.sendOrderConfirmation.mock.callCount(),
+                1
+            );
         });
 
         it('should handle payment_intent.payment_failed event', async () => {
@@ -208,16 +266,27 @@ describe('OrdersService', () => {
                 user: { email: 'user@test.com' },
             };
 
-            mockStripe.webhooks.constructEvent.mock.mockImplementation(() => mockEvent);
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(mockOrder));
-            orderRepository.save.mock.mockImplementation((o: any) => Promise.resolve(o));
-            emailService.sendPaymentFailure.mock.mockImplementation(() => Promise.resolve());
+            mockStripe.webhooks.constructEvent.mock.mockImplementation(
+                () => mockEvent
+            );
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockOrder)
+            );
+            orderRepository.save.mock.mockImplementation((o: any) =>
+                Promise.resolve(o)
+            );
+            emailService.sendPaymentFailure.mock.mockImplementation(() =>
+                Promise.resolve()
+            );
 
             await service.handleWebhook(signature, rawBody);
 
             assert.strictEqual(mockOrder.status, 'failed');
             assert.strictEqual(orderRepository.save.mock.callCount(), 1);
-            assert.strictEqual(emailService.sendPaymentFailure.mock.callCount(), 1);
+            assert.strictEqual(
+                emailService.sendPaymentFailure.mock.callCount(),
+                1
+            );
         });
 
         it('should throw BadRequestException on invalid signature', async () => {
@@ -243,7 +312,9 @@ describe('OrdersService', () => {
                 data: { object: {} },
             };
 
-            mockStripe.webhooks.constructEvent.mock.mockImplementation(() => mockEvent);
+            mockStripe.webhooks.constructEvent.mock.mockImplementation(
+                () => mockEvent
+            );
 
             // Should not throw
             await service.handleWebhook(signature, rawBody);
@@ -262,8 +333,12 @@ describe('OrdersService', () => {
                 },
             };
 
-            mockStripe.webhooks.constructEvent.mock.mockImplementation(() => mockEvent);
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            mockStripe.webhooks.constructEvent.mock.mockImplementation(
+                () => mockEvent
+            );
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             // Should not throw
             await service.handleWebhook(signature, rawBody);
@@ -280,7 +355,9 @@ describe('OrdersService', () => {
                 { id: 'order-2', userId, status: 'PENDING' },
             ];
 
-            orderRepository.find.mock.mockImplementation(() => Promise.resolve(mockOrders));
+            orderRepository.find.mock.mockImplementation(() =>
+                Promise.resolve(mockOrders)
+            );
 
             const result = await service.getUserOrders(userId);
 
@@ -294,7 +371,9 @@ describe('OrdersService', () => {
         });
 
         it('should order by createdAt DESC', async () => {
-            orderRepository.find.mock.mockImplementation(() => Promise.resolve([]));
+            orderRepository.find.mock.mockImplementation(() =>
+                Promise.resolve([])
+            );
 
             await service.getUserOrders('user-1');
 
@@ -309,7 +388,9 @@ describe('OrdersService', () => {
             const userId = 'user-1';
             const mockOrder = { id: orderId, userId, status: 'COMPLETED' };
 
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(mockOrder));
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockOrder)
+            );
 
             const result = await service.getOrder(orderId, userId);
 
@@ -318,7 +399,9 @@ describe('OrdersService', () => {
         });
 
         it('should throw NotFoundException if order does not exist', async () => {
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             await assert.rejects(
                 () => service.getOrder('not-exist', 'user-1'),
@@ -327,7 +410,9 @@ describe('OrdersService', () => {
         });
 
         it('should throw NotFoundException if order belongs to different user', async () => {
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             await assert.rejects(
                 () => service.getOrder('order-1', 'wrong-user'),
@@ -337,7 +422,9 @@ describe('OrdersService', () => {
 
         it('should include order items and vinyl relations', async () => {
             const mockOrder = { id: 'order-1', userId: 'user-1' };
-            orderRepository.findOne.mock.mockImplementation(() => Promise.resolve(mockOrder));
+            orderRepository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockOrder)
+            );
 
             await service.getOrder('order-1', 'user-1');
 

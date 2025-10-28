@@ -21,8 +21,14 @@ describe('UsersService', () => {
 
     describe('findByGoogleId', () => {
         it('should find user by google id', async () => {
-            const mockUser = { id: '1', googleId: 'google-123', email: 'test@test.com' };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockUser));
+            const mockUser = {
+                id: '1',
+                googleId: 'google-123',
+                email: 'test@test.com',
+            };
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockUser)
+            );
 
             const result = await service.findByGoogleId('google-123');
 
@@ -31,7 +37,9 @@ describe('UsersService', () => {
         });
 
         it('should return null when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             const result = await service.findByGoogleId('not-exist');
 
@@ -42,7 +50,9 @@ describe('UsersService', () => {
     describe('findByEmail', () => {
         it('should find user by email', async () => {
             const mockUser = { id: '1', email: 'test@test.com' };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockUser));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockUser)
+            );
 
             const result = await service.findByEmail('test@test.com');
 
@@ -50,7 +60,9 @@ describe('UsersService', () => {
         });
 
         it('should return null when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             const result = await service.findByEmail('not@exist.com');
 
@@ -61,7 +73,9 @@ describe('UsersService', () => {
     describe('findById', () => {
         it('should find user by id', async () => {
             const mockUser = { id: 'user-123' };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockUser));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockUser)
+            );
 
             const result = await service.findById('user-123');
 
@@ -69,7 +83,9 @@ describe('UsersService', () => {
         });
 
         it('should return null when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             const result = await service.findById('not-exist');
 
@@ -89,7 +105,9 @@ describe('UsersService', () => {
 
             const createdUser = { id: 'new-id', ...googleUser };
             repository.create.mock.mockImplementation((data: any) => data);
-            repository.save.mock.mockImplementation((user: any) => Promise.resolve(createdUser));
+            repository.save.mock.mockImplementation((user: any) =>
+                Promise.resolve(createdUser)
+            );
 
             const result = await service.createFromGoogle(googleUser);
 
@@ -110,7 +128,9 @@ describe('UsersService', () => {
                 avatar: 'new.jpg',
             };
 
-            repository.save.mock.mockImplementation((u: any) => Promise.resolve(u));
+            repository.save.mock.mockImplementation((u: any) =>
+                Promise.resolve(u)
+            );
 
             const result = await service.updateFromGoogle(user, googleUser);
 
@@ -122,7 +142,9 @@ describe('UsersService', () => {
     describe('getProfile', () => {
         it('should return user profile with relations', async () => {
             const mockUser = { id: 'user-1', email: 'test@test.com' };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(mockUser));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(mockUser)
+            );
 
             const result = await service.getProfile('user-1');
 
@@ -130,12 +152,13 @@ describe('UsersService', () => {
         });
 
         it('should throw NotFoundException when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
-
-            await assert.rejects(
-                () => service.getProfile('not-exist'),
-                { name: 'NotFoundException' }
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
             );
+
+            await assert.rejects(() => service.getProfile('not-exist'), {
+                name: 'NotFoundException',
+            });
         });
     });
 
@@ -147,8 +170,12 @@ describe('UsersService', () => {
                 lastName: 'Name',
             };
 
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(existingUser));
-            repository.save.mock.mockImplementation((u: any) => Promise.resolve(u));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(existingUser)
+            );
+            repository.save.mock.mockImplementation((u: any) =>
+                Promise.resolve(u)
+            );
 
             const updateData = { firstName: 'New', birthDate: '1990-01-15' };
             const result = await service.updateProfile('user-1', updateData);
@@ -158,7 +185,9 @@ describe('UsersService', () => {
         });
 
         it('should throw NotFoundException when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
+            );
 
             await assert.rejects(
                 () => service.updateProfile('not-exist', { firstName: 'Test' }),
@@ -170,8 +199,12 @@ describe('UsersService', () => {
     describe('deleteAccount', () => {
         it('should soft delete user', async () => {
             const user = { id: 'user-1', isDeleted: false };
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(user));
-            repository.save.mock.mockImplementation((u: any) => Promise.resolve(u));
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(user)
+            );
+            repository.save.mock.mockImplementation((u: any) =>
+                Promise.resolve(u)
+            );
 
             await service.deleteAccount('user-1');
 
@@ -181,21 +214,29 @@ describe('UsersService', () => {
         });
 
         it('should throw NotFoundException when not found', async () => {
-            repository.findOne.mock.mockImplementation(() => Promise.resolve(null));
-
-            await assert.rejects(
-                () => service.deleteAccount('not-exist'),
-                { name: 'NotFoundException' }
+            repository.findOne.mock.mockImplementation(() =>
+                Promise.resolve(null)
             );
+
+            await assert.rejects(() => service.deleteAccount('not-exist'), {
+                name: 'NotFoundException',
+            });
         });
     });
 
     describe('createLocal', () => {
         it('should create user with hashed password', async () => {
             repository.create.mock.mockImplementation((data: any) => data);
-            repository.save.mock.mockImplementation((u: any) => Promise.resolve(u));
+            repository.save.mock.mockImplementation((u: any) =>
+                Promise.resolve(u)
+            );
 
-            await service.createLocal('test@test.com', 'password123', 'John', 'Doe');
+            await service.createLocal(
+                'test@test.com',
+                'password123',
+                'John',
+                'Doe'
+            );
 
             assert.strictEqual(repository.create.mock.callCount(), 1);
             assert.strictEqual(repository.save.mock.callCount(), 1);
@@ -223,7 +264,10 @@ describe('UsersService', () => {
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = { id: '1', password: hashedPassword };
 
-            const result = await service.validatePassword(user, 'wrongpassword');
+            const result = await service.validatePassword(
+                user,
+                'wrongpassword'
+            );
 
             assert.strictEqual(result, false);
         });
@@ -236,16 +280,30 @@ describe('UsersService', () => {
             const mockUser = { id: 'user-1', password: hashedPassword };
 
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(mockUser)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
-            repository.save.mock.mockImplementation((u: any) => Promise.resolve(u));
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
+            repository.save.mock.mockImplementation((u: any) =>
+                Promise.resolve(u)
+            );
 
-            await service.changePassword('user-1', currentPassword, 'newpass123');
+            await service.changePassword(
+                'user-1',
+                currentPassword,
+                'newpass123'
+            );
 
             assert.strictEqual(repository.save.mock.callCount(), 1);
             const saved = repository.save.mock.calls[0].arguments[0];
@@ -258,13 +316,21 @@ describe('UsersService', () => {
             const mockUser = { id: 'user-1', password: hashedPassword };
 
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(mockUser)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await assert.rejects(
                 () => service.changePassword('user-1', 'wrongpass', 'newpass'),
@@ -276,13 +342,21 @@ describe('UsersService', () => {
             const mockUser = { id: 'user-1', password: null };
 
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(mockUser)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await assert.rejects(
                 () => service.changePassword('user-1', 'any', 'newpass'),
@@ -292,13 +366,21 @@ describe('UsersService', () => {
 
         it('should throw NotFoundException when user not found', async () => {
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(null)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
             await assert.rejects(
                 () => service.changePassword('not-exist', 'old', 'new'),
@@ -309,18 +391,31 @@ describe('UsersService', () => {
 
     describe('findByEmailWithPassword', () => {
         it('should return user with password field', async () => {
-            const mockUser = { id: 'user-1', email: 'test@test.com', password: 'hashed' };
+            const mockUser = {
+                id: 'user-1',
+                email: 'test@test.com',
+                password: 'hashed',
+            };
 
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(mockUser)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
-            const result = await service.findByEmailWithPassword('test@test.com');
+            const result =
+                await service.findByEmailWithPassword('test@test.com');
 
             assert.strictEqual(result.email, 'test@test.com');
             assert.ok(result.password);
@@ -328,15 +423,24 @@ describe('UsersService', () => {
 
         it('should return null when not found', async () => {
             const queryBuilder = {
-                addSelect: mock.fn(function() { return this; }),
-                where: mock.fn(function() { return this; }),
-                andWhere: mock.fn(function() { return this; }),
+                addSelect: mock.fn(function () {
+                    return this;
+                }),
+                where: mock.fn(function () {
+                    return this;
+                }),
+                andWhere: mock.fn(function () {
+                    return this;
+                }),
                 getOne: mock.fn(() => Promise.resolve(null)),
             };
 
-            repository.createQueryBuilder.mock.mockImplementation(() => queryBuilder);
+            repository.createQueryBuilder.mock.mockImplementation(
+                () => queryBuilder
+            );
 
-            const result = await service.findByEmailWithPassword('not@exist.com');
+            const result =
+                await service.findByEmailWithPassword('not@exist.com');
 
             assert.strictEqual(result, null);
         });

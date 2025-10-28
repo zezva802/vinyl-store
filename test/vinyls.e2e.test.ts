@@ -18,7 +18,7 @@ describe('Vinyls E2E Tests', () => {
                 email: 'admin@vinyl.test',
                 password: 'AdminPass123!',
                 firstName: 'Admin',
-                lastName:'Adminadze'
+                lastName: 'Adminadze',
             }),
         });
         const adminData = await adminRes.json();

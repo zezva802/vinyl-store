@@ -48,7 +48,7 @@ describe('Reviews E2E Tests', () => {
                 email: 'admin@review.test',
                 password: 'AdminPass123!',
                 firstName: 'Admin',
-                lastName:'Adminadze'
+                lastName: 'Adminadze',
             }),
         });
         const adminData = await adminRes.json();
@@ -100,7 +100,10 @@ describe('Reviews E2E Tests', () => {
             assert.strictEqual(response.status, 201);
 
             const review = await response.json();
-            assert.strictEqual(review.comment, 'Great album! Love the sound quality.');
+            assert.strictEqual(
+                review.comment,
+                'Great album! Love the sound quality.'
+            );
             assert.strictEqual(review.score, 9);
             assert.strictEqual(review.userId, user1Id);
 
@@ -230,9 +233,7 @@ describe('Reviews E2E Tests', () => {
 
     describe('GET /reviews/:id', () => {
         it('should get review by id', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/reviews/${reviewId}`
-            );
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`);
 
             assert.strictEqual(response.status, 200);
 
@@ -281,9 +282,7 @@ describe('Reviews E2E Tests', () => {
         });
 
         it('should return 404 for deleted review', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/reviews/${reviewId}`
-            );
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`);
 
             assert.strictEqual(response.status, 404);
         });

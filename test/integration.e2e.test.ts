@@ -20,7 +20,7 @@ describe('Integration E2E Tests', () => {
                 email: 'admin@integration.test',
                 password: 'AdminPass123!',
                 firstName: 'Admin',
-                lastName: 'Adminashvili'
+                lastName: 'Adminashvili',
             }),
         });
         const adminData = await adminRes.json();
@@ -87,9 +87,7 @@ describe('Integration E2E Tests', () => {
         });
 
         it('User views specific vinyl details', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/vinyls/${vinylId}`
-            );
+            const response = await fetch(`${API_BASE_URL}/vinyls/${vinylId}`);
 
             assert.strictEqual(response.status, 200);
             const vinyl = await response.json();
@@ -117,9 +115,7 @@ describe('Integration E2E Tests', () => {
         });
 
         it('Vinyl now shows updated average score', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/vinyls/${vinylId}`
-            );
+            const response = await fetch(`${API_BASE_URL}/vinyls/${vinylId}`);
 
             const vinyl = await response.json();
             assert.strictEqual(vinyl.averageScore, 9);
@@ -149,23 +145,18 @@ describe('Integration E2E Tests', () => {
             assert.strictEqual(response.status, 200);
             const profile = await response.json();
             assert.ok(profile.reviews.length > 0);
-            assert.ok(
-                profile.reviews.some((r: any) => r.id === reviewId)
-            );
+            assert.ok(profile.reviews.some((r: any) => r.id === reviewId));
         });
 
         it('Admin updates vinyl price', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/vinyls/${vinylId}`,
-                {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${adminToken}`,
-                    },
-                    body: JSON.stringify({ price: 19.99 }),
-                }
-            );
+            const response = await fetch(`${API_BASE_URL}/vinyls/${vinylId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${adminToken}`,
+                },
+                body: JSON.stringify({ price: 19.99 }),
+            });
 
             assert.strictEqual(response.status, 200);
             const vinyl = await response.json();
@@ -185,9 +176,7 @@ describe('Integration E2E Tests', () => {
         });
 
         it('Vinyl average score resets after review deletion', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/vinyls/${vinylId}`
-            );
+            const response = await fetch(`${API_BASE_URL}/vinyls/${vinylId}`);
 
             const vinyl = await response.json();
             assert.strictEqual(vinyl.averageScore, 0);
@@ -223,7 +212,7 @@ describe('Integration E2E Tests', () => {
                     email: 'user2@integration.test',
                     password: 'Pass123!',
                     firstName: 'test2',
-                    lastName: 'test2shivli'
+                    lastName: 'test2shivli',
                 }),
             });
             user2Token = (await user2Res.json()).accessToken;
@@ -235,7 +224,7 @@ describe('Integration E2E Tests', () => {
                     email: 'user3@integration.test',
                     password: 'Pass123!',
                     firstName: 'test3',
-                    lastName:'test3shvili'
+                    lastName: 'test3shvili',
                 }),
             });
             user3Token = (await user3Res.json()).accessToken;
@@ -363,9 +352,7 @@ describe('Integration E2E Tests', () => {
         });
 
         it('Search by name finds correct vinyls', async () => {
-            const response = await fetch(
-                `${API_BASE_URL}/vinyls?search=Rock`
-            );
+            const response = await fetch(`${API_BASE_URL}/vinyls?search=Rock`);
 
             assert.strictEqual(response.status, 200);
             const data = await response.json();
@@ -373,8 +360,7 @@ describe('Integration E2E Tests', () => {
             assert.ok(
                 data.data.every(
                     (v: any) =>
-                        v.name.includes('Rock') ||
-                        v.authorName.includes('Rock')
+                        v.name.includes('Rock') || v.authorName.includes('Rock')
                 )
             );
         });
@@ -397,7 +383,7 @@ describe('Integration E2E Tests', () => {
 
             assert.strictEqual(response.status, 200);
             const data = await response.json();
-            
+
             for (let i = 0; i < data.data.length - 1; i++) {
                 const current = parseFloat(data.data[i].price);
                 const next = parseFloat(data.data[i + 1].price);
@@ -412,21 +398,17 @@ describe('Integration E2E Tests', () => {
 
             assert.strictEqual(response.status, 200);
             const data = await response.json();
-            
+
             for (let i = 0; i < data.data.length - 1; i++) {
                 assert.ok(data.data[i].name >= data.data[i + 1].name);
             }
         });
 
         it('Pagination works correctly', async () => {
-            const page1 = await fetch(
-                `${API_BASE_URL}/vinyls?page=1&limit=2`
-            );
+            const page1 = await fetch(`${API_BASE_URL}/vinyls?page=1&limit=2`);
             const data1 = await page1.json();
 
-            const page2 = await fetch(
-                `${API_BASE_URL}/vinyls?page=2&limit=2`
-            );
+            const page2 = await fetch(`${API_BASE_URL}/vinyls?page=2&limit=2`);
             const data2 = await page2.json();
 
             assert.strictEqual(data1.data.length, 2);
@@ -440,48 +422,51 @@ describe('Integration E2E Tests', () => {
         let sensitiveReviewId: string;
 
         before(async () => {
-    const vinylRes = await fetch(`${API_BASE_URL}/vinyls`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify({
-            name: 'Access Control Test',
-            authorName: 'Test',
-            description: 'Test',
-            price: 19.99,
-        }),
-    });
+            const vinylRes = await fetch(`${API_BASE_URL}/vinyls`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${adminToken}`,
+                },
+                body: JSON.stringify({
+                    name: 'Access Control Test',
+                    authorName: 'Test',
+                    description: 'Test',
+                    price: 19.99,
+                }),
+            });
 
-    const vinylData = await vinylRes.json();
-    if (!vinylData?.id) {
-        console.error('Failed to create vinyl:', vinylData);
-        throw new Error('Cannot proceed without vinyl for access control tests.');
-    }
-    sensitiveVinylId = vinylData.id;
+            const vinylData = await vinylRes.json();
+            if (!vinylData?.id) {
+                console.error('Failed to create vinyl:', vinylData);
+                throw new Error(
+                    'Cannot proceed without vinyl for access control tests.'
+                );
+            }
+            sensitiveVinylId = vinylData.id;
 
-    const reviewRes = await fetch(`${API_BASE_URL}/reviews`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`,
-        },
-        body: JSON.stringify({
-            vinylId: sensitiveVinylId,
-            comment: 'User review',
-            score: 7,
-        }),
-    });
+            const reviewRes = await fetch(`${API_BASE_URL}/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
+                body: JSON.stringify({
+                    vinylId: sensitiveVinylId,
+                    comment: 'User review',
+                    score: 7,
+                }),
+            });
 
-    const reviewData = await reviewRes.json();
-    if (!reviewData?.id) {
-        console.error('Failed to create review:', reviewData);
-        throw new Error('Cannot proceed without review for access control tests.');
-    }
-    sensitiveReviewId = reviewData.id;
-});
-
+            const reviewData = await reviewRes.json();
+            if (!reviewData?.id) {
+                console.error('Failed to create review:', reviewData);
+                throw new Error(
+                    'Cannot proceed without review for access control tests.'
+                );
+            }
+            sensitiveReviewId = reviewData.id;
+        });
 
         it('Admin can update any vinyl', async () => {
             const response = await fetch(
@@ -612,7 +597,6 @@ describe('Integration E2E Tests', () => {
             });
             console.log('Response status:', response.status);
 
-
             assert.ok(
                 response.status === 201 ||
                     response.status === 400 ||
@@ -638,7 +622,7 @@ describe('Integration E2E Tests', () => {
             );
 
             const results = await Promise.all(promises);
-            
+
             results.forEach((response) => {
                 assert.strictEqual(response.status, 201);
             });
