@@ -63,11 +63,6 @@ export class AuthController {
     @ApiResponse({ status: 302, description: 'Redirect to Google' })
     async googleAuth(): Promise<void> {}
 
-    /**
-     * Note: Using 'any' for req type due to Passport's dynamic user attachment.
-     * In production, would extend Express Request interface with GoogleUser type.
-     * Isolated to this single callback - all other endpoints use @CurrentUser() decorator.
-     */
     @Get('google/callback')
     @UseGuards(GoogleAuthGuard)
     @ApiOperation({

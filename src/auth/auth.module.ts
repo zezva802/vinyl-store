@@ -43,6 +43,6 @@ import { TokenBlacklistService } from './token-blacklist.service';
         TokenBlacklistService,
     ],
     controllers: [AuthController],
-    exports: [AuthService], //just in case
+    exports: [AuthService],
 })
 export class AuthModule {}

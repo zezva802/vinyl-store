@@ -56,7 +56,7 @@ import { TelegramModule } from './telegram/telegram.module';
 
         EmailModule,
         DiscogsModule,
-        TelegramModule
+        TelegramModule,
     ],
     controllers: [AppController],
     providers: [AppService],

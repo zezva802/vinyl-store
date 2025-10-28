@@ -29,9 +29,7 @@ export class TelegramService {
 
     async postVinylToChannel(vinyl: Vinyl): Promise<boolean> {
         if (!this.bot) {
-            console.warn(
-                'Telegram bot not configured. Skipping channel post.'
-            );
+            console.warn('Telegram bot not configured. Skipping channel post.');
             return false;
         }
 

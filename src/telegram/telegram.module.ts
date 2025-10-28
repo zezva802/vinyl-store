@@ -4,7 +4,7 @@ import { TelegramController } from './telegram.controller';
 import { VinylsModule } from 'src/vinyls/vinyls.module';
 
 @Module({
-    imports:[VinylsModule],
+    imports: [VinylsModule],
     providers: [TelegramService],
     controllers: [TelegramController],
     exports: [TelegramService],
